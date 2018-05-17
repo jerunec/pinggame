@@ -1,13 +1,20 @@
-import socket
-import sys
 import os
+import subprocess
+import re
 
-serverAdd = input('input server')
 
-rep = os.system('ping ' + serverAdd + ' -t')
+def pingServer(games):
+	for item in games:
+		serverAdd = "ping -n 5 "+ item  # the shell command
+		output = subprocess.check_output(serverAdd, shell=True)
+		decoded = output.decode('utf-8')
+		matches = re.findall("Average = ([\\d.]+)ms",decoded)
+		print(item+" "+str(matches))
 
-if rep == 0:
-	print('server is up')
-else:
-	print('server is down')
+filename1 = "games.txt"
+file1 = open(filename1, "r")
+
+with open(filename1) as f:
+    content_1 = f.readlines()
+    pingServer(content_1)
 
