@@ -1,0 +1,3 @@
+# pinggame
+
+Ping game servers
