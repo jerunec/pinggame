@@ -1,11 +1,11 @@
 import os
 import subprocess
 import re
-
 import tkinter as tk
 import tkinter.filedialog
 
 from multiprocessing.dummy import Pool as ThreadPool
+
 
 class Application(tk.Frame):
 
@@ -14,28 +14,22 @@ class Application(tk.Frame):
 
     def __init__(self, master=None):
         super().__init__(master)
-        root.title("Ping Game")
+        root.title("Ping Game")   
         self.pack()
         self.create_widgets()
         self.pingButton()
-        
 
+        root.minsize(width=50,height=50)
     def create_widgets(self):
 
         menubar   = tk.Menu(self)
-        
-    
         file_menu = tk.Menu(root,tearoff=0)
 
-        file_menu.add_command(label="Add")
+        file_menu.add_command(label="Add",command=self.popAdd)
         file_menu.add_command(label="Delete")
-        # file_menu.add_command(label="Open", command=self.onOpen)
         file_menu.add_command(label="Exit", command=self.quit_app)
-       
+
         menubar.add_cascade(label="File", menu=file_menu)
-        
-        # toolbar = tk.Frame(root, bd=1, relief=tk.RAISED)
-        
         root.config(menu=menubar)
 
     def pingButton(self):
@@ -49,23 +43,49 @@ class Application(tk.Frame):
         main=Main()
         serverList=main.start()
         text = tk.Text(root)
+        serverDisplay = tk.Label(root)
         # i=0
+        serverDisplay['text'] = ''
+        text.delete(1.0,tk.END)
+        servers = ''
         for items in serverList:
-            # i+=1.0
-            # print(i)
-            text.insert(1.0,str(items)+'\n')
-        
-        text.pack()
-        
+            servers += str(items)+'\n'
+            print(items)
+        serverDisplay['text'] = servers
+        serverDisplay.pack()
 
-        print(serverList)
-        
+        # print(serverList)
 
-    # def onOpen(self):
-    #     dlg = tk.filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes =[ ("All files","*.*")])
+    def popAdd(self):
+        # f = tk.Frame(None, height=300, width=300)
+        toplevel = tk.Toplevel()
+        # frame = tk.Frame(toplevel)
+        toplevel.maxsize(width=300, height=300)
+        toplevel.minsize(width=300, height=300)
+        toplevel.title("Add Server")
+        label1 = tk.Label(toplevel, text="Add Server")
+        e1 = tk.Entry(toplevel, bd =5)
         
-    #     print(dlg)
-    #     self.readFile(dlg)
+        
+        def addServer():
+             file = open("games.txt", "a")
+             file.write("\n"+e1.get())
+             file.close()
+             
+        
+        button = tk.Button(toplevel, text="Add", command=addServer)
+        label1.pack()
+        e1.pack()
+        button.pack()
+        # frame.pack()
+        # root.minsize(300,300)
+       
+        # return label1
+
+    
+        # file = open(filename, "w")
+
+
 
 class Main:
     # consts
@@ -89,7 +109,6 @@ class Main:
 
     def start(self):
         pool    = ThreadPool(self.NUM_THREADS)
-    
         results=pool.map(self.pingServers, self.urls)
         # returnVal=pingServers.get()
         pool.close() 
@@ -100,10 +119,11 @@ class Main:
     def parseFile(self, filename):
         file = open(filename, "r")
         return list(filter(None, (line.rstrip() for line in file)))
+        file.close()
 
 #################### START ####################
 root = tk.Tk()
 app = Application(master=root)
-root.geometry("600x550")
-
+root.geometry("300x300")
+root.minsize(300,300)
 root.mainloop()
