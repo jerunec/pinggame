@@ -3,9 +3,13 @@ import subprocess
 import re
 import tkinter as tk
 import tkinter.filedialog
+from tkinter import StringVar
+from tkinter import *
 
 from multiprocessing.dummy import Pool as ThreadPool
 
+root = tk.Tk()
+serversList= tk.StringVar()
 
 class Application(tk.Frame):
 
@@ -40,19 +44,19 @@ class Application(tk.Frame):
 
     def printPing(self):
         serverList= []
-        main=Main()
-        serverList=main.start()
-        text = tk.Text(root)
-        serverDisplay = tk.Label(root)
+        main          = Main()
+        serverList    = main.start()
+        text          = tk.Text(root)
+       
         # i=0
-        serverDisplay['text'] = ''
-        text.delete(1.0,tk.END)
+        empty=''
+        serverDisplay['text'] = empty
+        # serverDisplay.delete(1.0,tk.END)
         servers = ''
         for items in serverList:
             servers += str(items)+'\n'
             print(items)
-        serverDisplay['text'] = servers
-        serverDisplay.pack()
+        serversList.set(servers)
 
         # print(serverList)
 
@@ -77,16 +81,7 @@ class Application(tk.Frame):
         label1.pack()
         e1.pack()
         button.pack()
-        # frame.pack()
-        # root.minsize(300,300)
-       
-        # return label1
-
-    
-        # file = open(filename, "w")
-
-
-
+ 
 class Main:
     # consts
     NUM_THREADS  = 2
@@ -122,8 +117,10 @@ class Main:
         file.close()
 
 #################### START ####################
-root = tk.Tk()
+
 app = Application(master=root)
-root.geometry("300x300")
+serverDisplay = tk.Label(root,textvariable=serversList)
+serverDisplay.pack()
+root.maxsize(300,300)
 root.minsize(300,300)
 root.mainloop()
