@@ -81,15 +81,19 @@ class Application(tk.Frame):
         label1.pack()
         e1.pack()
         button.pack()
- 
+
 class Main:
     # consts
     NUM_THREADS  = 2
     NUM_REQUESTS = 5
 
     def __init__(self, master=None):
-        self.urls = self.parseFile("games.txt")
-
+        try:
+            self.urls = self.parseFile("games.txt")
+        except:
+            file = open("games.txt", "w+")
+            self.urls = list(filter(None, (line.rstrip() for line in file)))
+            file.close()
     def pingServers(self, item):
         
         serverAdd    = "ping -n " + str(self.NUM_REQUESTS) + " " + item
